@@ -3,18 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <title>نظام الفواتير المتقدم - شركة الموج</title>
-    
+
     <link rel="icon" type="image/png" href="icon-192.png">
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#1e3c72">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    
+
     <link href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+
     <style>
         :root {
             --primary-color: #1e3c72;
@@ -26,21 +26,22 @@
             --light-color: #f8f9fa;
             --dark-color: #343a40;
         }
-        
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             font-family: 'El Messiri', sans-serif;
         }
-        
+
         body {
             background: #f5f5f5;
             padding: 15px;
-            font-size: 13px;
-            color: #333;
+            font-size: 22px;              /* +0.7 ≈ 22px */
+            color: #222;
+            font-weight: 700;             /* عريض عام */
         }
-        
+
         /* حاوية الفاتورة - ورقة A4 محسنة */
         .invoice-container {
             width: 21cm;
@@ -54,7 +55,7 @@
             display: flex;
             flex-direction: column;
         }
-        
+
         /* الرأس */
         .header {
             display: flex;
@@ -64,49 +65,50 @@
             padding-bottom: 10px;
             border-bottom: 2px solid var(--primary-color);
         }
-        
+
         .logo-container {
             flex: 1;
             text-align: right;
         }
-        
+
         .logo-container img {
             max-width: 140px;
             height: auto;
         }
-        
+
         .company-info {
             text-align: left;
             flex: 1;
         }
-        
+
         .company-name-ar {
-            font-size: 18px;
+            font-size: 31px;              /* +0.7 ≈ 31px */
             font-weight: 700;
             color: var(--primary-color);
             margin-bottom: 2px;
         }
-        
+
         .company-subtitle-ar {
-            font-size: 13px;
-            color: #333;
+            font-size: 22px;              /* +0.7 ≈ 22px */
+            color: #222;
             margin-bottom: 2px;
+            font-weight: 700;
         }
-        
+
         .company-name-en {
-            font-size: 11px;
-            color: #666;
-            font-weight: 600;
+            font-size: 19px;              /* +0.7 ≈ 19px */
+            color: #444;
+            font-weight: 700;
         }
-        
+
         .invoice-meta {
             text-align: center;
             flex: 1;
         }
-        
+
         /* حالات الدفع */
         .payment-type {
-            font-size: 14px;
+            font-size: 24px;              /* +0.7 ≈ 24px */
             font-weight: 700;
             margin-bottom: 4px;
             padding: 3px 10px;
@@ -118,10 +120,10 @@
         .payment-type.bank { color: var(--info-color); background-color: rgba(23, 162, 184, 0.1); }
         .payment-type.card { color: var(--primary-color); background-color: rgba(30, 60, 114, 0.1); }
         .payment-type.mixed { color: var(--danger-color); background-color: rgba(220, 53, 69, 0.1); }
-        
+
         .invoice-status {
-            font-size: 11px;
-            font-weight: 600;
+            font-size: 19px;              /* +0.7 ≈ 19px */
+            font-weight: 700;
             margin-top: 4px;
             padding: 2px 6px;
             border-radius: 12px;
@@ -130,19 +132,19 @@
         .invoice-status.paid { color: var(--success-color); background-color: rgba(40, 167, 69, 0.1); }
         .invoice-status.partial { color: var(--warning-color); background-color: rgba(255, 193, 7, 0.1); }
         .invoice-status.unpaid { color: var(--danger-color); background-color: rgba(220, 53, 69, 0.1); }
-        
+
         .invoice-number {
-            font-size: 12px;
-            color: #333;
+            font-size: 20px;              /* +0.7 ≈ 20px */
+            color: #222;
             margin-top: 5px;
-            font-weight: bold;
+            font-weight: 700;
         }
-        
+
         /* أقسام النموذج */
         .form-section { margin-bottom: 10px; }
-        
+
         .section-title {
-            font-size: 13px;
+            font-size: 22px;              /* +0.7 ≈ 22px */
             font-weight: 700;
             color: var(--primary-color);
             margin-bottom: 6px;
@@ -151,76 +153,81 @@
             border-radius: 4px;
             border-right: 3px solid var(--primary-color);
         }
-        
+
         .form-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 8px;
             margin-bottom: 6px;
         }
-        
+
         .form-field { display: flex; align-items: center; }
-        
+
         .form-label {
-            font-weight: 600;
+            font-weight: 700;
             min-width: 90px;
             margin-left: 6px;
-            font-size: 12px;
-            color: #333;
+            font-size: 20px;              /* +0.7 ≈ 20px */
+            color: #222;
         }
-        
+
         .form-input, .form-select {
             flex: 1;
             border: none;
             border-bottom: 1px solid #ddd;
             padding: 4px 6px;
-            font-size: 12px;
+            font-size: 20px;              /* +0.7 ≈ 20px */
             background: transparent;
             font-family: 'El Messiri', sans-serif;
+            font-weight: 700;
         }
-        
+
         .form-input:focus, .form-select:focus {
             outline: none;
             border-bottom: 1px solid var(--primary-color);
             background-color: rgba(30, 60, 114, 0.02);
         }
-        
+
         /* جدول الخدمات */
         .invoice-table {
             width: 100%;
             border-collapse: collapse;
             margin: 8px 0;
-            font-size: 12px;
+            font-size: 20px;              /* +0.7 ≈ 20px */
         }
-        
+
         .invoice-table th {
             background: var(--primary-color);
             color: white;
             padding: 6px;
             text-align: center;
-            font-weight: 600;
+            font-weight: 700;
             border: 1px solid #152b52;
+            font-size: 20px;              /* +0.7 ≈ 20px */
         }
-        
+
         .invoice-table td {
             padding: 5px;
             border: 1px solid #ddd;
             text-align: center;
+            font-size: 20px;              /* +0.7 ≈ 20px */
+            font-weight: 700;
         }
-        
+
         .col-no { width: 40px; }
         .col-details { text-align: right; }
         .col-price { width: 120px; }
-        
+
         .table-input {
             width: 100%;
             border: none;
             background: transparent;
             text-align: center;
-            font-size: 12px;
+            font-size: 20px;              /* +0.7 ≈ 20px */
             padding: 2px;
+            font-weight: 700;
         }
-        
+
         /* قسم الصافي */
         .net-amount-section {
             background: #f0f7ff;
@@ -230,19 +237,19 @@
             border: 1px solid #d0e3ff;
             text-align: center;
         }
-        
+
         .net-amount-label {
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--primary-color);
-        }
-        
-        .net-amount-value {
-            font-size: 18px;
+            font-size: 22px;              /* +0.7 ≈ 22px */
             font-weight: 700;
             color: var(--primary-color);
         }
-        
+
+        .net-amount-value {
+            font-size: 31px;              /* +0.7 ≈ 31px */
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
         /* المبلغ كتابة */
         .amount-words-section {
             background: #f9f9f9;
@@ -252,13 +259,13 @@
             border: 1px solid #eee;
             text-align: center;
         }
-        
+
         .amount-words {
-            font-size: 13px;
-            font-weight: 600;
-            color: #555;
+            font-size: 22px;              /* +0.7 ≈ 22px */
+            font-weight: 700;
+            color: #222;
         }
-        
+
         /* الملخص المالي */
         .financial-summary {
             display: grid;
@@ -266,26 +273,27 @@
             gap: 15px;
             margin: 10px 0;
         }
-        
+
         .summary-card {
             background: var(--light-color);
             border-radius: 6px;
             padding: 10px;
             border-right: 3px solid var(--primary-color);
         }
-        
+
         .summary-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 4px 0;
             border-bottom: 1px dashed #ddd;
-            font-size: 12px;
+            font-size: 20px;              /* +0.7 ≈ 20px */
+            font-weight: 700;
         }
-        
-        .summary-label { font-weight: 600; color: #333; }
+
+        .summary-label { font-weight: 700; color: #222; }
         .summary-value { font-weight: 700; color: var(--primary-color); }
-        
+
         /* التوقيع والباركود - تصميم محسن */
         .signature-section {
             display: grid;
@@ -295,22 +303,23 @@
             margin-bottom: 30px;
             align-items: end;
         }
-        
+
         .signature-box {
             border-top: 1px solid #333;
             text-align: center;
             padding-top: 5px;
-            font-size: 12px;
+            font-size: 20px;              /* +0.7 ≈ 20px */
             margin: 0 40px;
+            font-weight: 700;
         }
-        
+
         .qr-code-container {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
         }
-        
+
         /* تنسيق صورة الباركود الجديدة */
         .qr-code-img {
             width: 100px;
@@ -319,26 +328,27 @@
             padding: 2px;
             border-radius: 4px;
         }
-        
+
         .qr-code-text {
-            font-size: 10px;
-            color: #666;
+            font-size: 17px;              /* +0.7 ≈ 17px */
+            color: #444;
             margin-top: 3px;
-            font-weight: bold;
+            font-weight: 700;
         }
-        
+
         /* التذييل */
         .footer {
             text-align: center;
-            font-size: 10px;
-            color: #666;
+            font-size: 17px;              /* +0.7 ≈ 17px */
+            color: #444;
             border-top: 1px solid #ddd;
             padding-top: 10px;
             margin-top: 10px;
+            font-weight: 700;
         }
-        
-        .address { font-weight: 600; margin-bottom: 2px; color: #333; }
-        
+
+        .address { font-weight: 700; margin-bottom: 2px; color: #222; }
+
         /* أزرار التحكم */
         .controls {
             text-align: center;
@@ -348,7 +358,7 @@
             gap: 10px;
             flex-wrap: wrap;
         }
-        
+
         .btn {
             background: var(--primary-color);
             color: white;
@@ -356,18 +366,19 @@
             padding: 10px 20px;
             border-radius: 4px;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 24px;              /* +0.7 ≈ 24px */
             display: flex;
             align-items: center;
             gap: 8px;
             transition: 0.3s;
+            font-weight: 700;
         }
-        
+
         .btn:hover { opacity: 0.9; transform: translateY(-2px); }
         .btn-secondary { background: var(--secondary-color); }
         .btn-add { background: var(--success-color); }
         .btn-danger { background: var(--danger-color); }
-        
+
         /* تنبيهات */
         .service-limit-warning {
             background: #fff3cd;
@@ -376,9 +387,10 @@
             border-radius: 4px;
             margin-bottom: 8px;
             display: none;
-            font-size: 12px;
+            font-size: 20px;              /* +0.7 ≈ 20px */
             text-align: center;
             border: 1px solid #ffeeba;
+            font-weight: 700;
         }
         .service-limit-warning.show { display: block; }
 
@@ -386,6 +398,8 @@
             position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
             background: var(--primary-color); color: white; padding: 12px 24px;
             border-radius: 4px; opacity: 0; transition: 0.3s; z-index: 2000;
+            font-size: 20px;              /* +0.7 ≈ 20px */
+            font-weight: 700;
         }
         .toast.show { opacity: 1; }
 
